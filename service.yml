@@ -1,0 +1,31 @@
+machine:
+  image:  packer-pure-18
+  instance_type: t2.medium
+  start:  "/home/bz-app/asgserver/asgserver"
+  daemon_type:  systemd
+  install:
+  environment_variables:
+    - "SERVER_ID=$(wget -q -O - http://instance-data/latest/meta-data/instance-id)"
+deployment:
+  service_name: "asgserver"
+  source:
+    type: s3
+    bucket: "betterez-asgserver-18"
+    file_name: asgserver
+  service_type: "http"
+  nginx_conf: "asgserver"
+  path_name:  "asgserver"
+  healthcheck:
+    perform: true
+    command: "curl -m 5 -i localhost:3000/healthcheck|head -n1"
+    result: "200 OK"
+override:
+  production:
+    machine:
+      instance_type: t3.medium
+  sandbox:
+    machine:
+      instance_type: t3.medium
+  support:
+    deployment:
+        elb_version: 0
