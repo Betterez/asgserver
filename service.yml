@@ -6,6 +6,7 @@ machine:
   install:
   environment_variables:
     - "SERVER_ID=$(wget -q -O - http://instance-data/latest/meta-data/instance-id)"
+    - "VERSION=2"
 deployment:
   service_name: "asgserver"
   source:
